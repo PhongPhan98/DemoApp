@@ -1,4 +1,5 @@
-﻿using Azure.Core;
+﻿using AutoMapper;
+using Azure.Core;
 using DemoApp.API.Data;
 using DemoApp.API.Models.Domain;
 using DemoApp.API.Models.DTO;
@@ -9,23 +10,18 @@ namespace DemoApp.API.Repositories
     public class SQLStudentRepository : IStudentRepository
     {
         private readonly DemoAppDbContext _dbContext;
-        public SQLStudentRepository(DemoAppDbContext dbContext)
+        private readonly IMapper mapper;
+        public SQLStudentRepository(DemoAppDbContext dbContext, IMapper mapper)
         {
                this._dbContext = dbContext;
+               this.mapper = mapper;
         }
 
         public async Task<List<StudentDto>> GetAllAsync()
         {
             var studentDomainList = await _dbContext.Students.ToListAsync();
-            return studentDomainList.Select(studentDomain => new StudentDto() {
-                Id = studentDomain.Id,
-                FirstName = studentDomain.FirstName,
-                LastName = studentDomain.LastName,
-                PhoneNumber = studentDomain.PhoneNumber,
-                Email = studentDomain.Email,
-                Old = studentDomain.Old,
-                AvataUrl = studentDomain.AvataUrl
-            }).ToList();
+            return mapper.Map<List<StudentDto>>(studentDomainList);
+           
         }
 
 
@@ -44,16 +40,7 @@ namespace DemoApp.API.Repositories
 
             await _dbContext.Students.AddAsync(record);
             await _dbContext.SaveChangesAsync();
-            return new StudentDto()
-            {
-                Id = record.Id,
-                FirstName = record.FirstName,
-                LastName = record.LastName,
-                PhoneNumber = record.PhoneNumber,
-                Email = record.Email,
-                Old = record.Old,
-                AvataUrl = record.AvataUrl
-            };
+            return mapper.Map<StudentDto>(record);
         }
 
         public async Task<StudentDto?> DeleteAsync(Guid StudentId)
@@ -62,31 +49,13 @@ namespace DemoApp.API.Repositories
             if (record == null) return null;
             _dbContext.Students.Remove(record);
             await _dbContext.SaveChangesAsync();
-            return new StudentDto()
-            {
-                Id = record.Id,
-                FirstName = record.FirstName,
-                LastName = record.LastName,
-                PhoneNumber = record.PhoneNumber,
-                Email = record.Email,
-                Old = record.Old,
-                AvataUrl = record.AvataUrl
-            }; 
+            return mapper.Map<StudentDto>(record);
         }
         public async Task<StudentDto?> GetAsync(Guid StudentId)
         {
             var dataDomain = await _dbContext.Students.FindAsync(StudentId);
             if (dataDomain == null) return null;
-            return new StudentDto()
-            {
-                Id = dataDomain.Id,
-                FirstName = dataDomain.FirstName,
-                LastName = dataDomain.LastName,
-                PhoneNumber = dataDomain.PhoneNumber,
-                Email = dataDomain.Email,
-                Old = dataDomain.Old,
-                AvataUrl = dataDomain.AvataUrl
-            };
+            return mapper.Map<StudentDto>(dataDomain);
         }
 
         public async Task<StudentDto?> UpdateAsync(Guid studentId, UpdateStudentRequestDto updateStudentRequestDto)
@@ -102,16 +71,7 @@ namespace DemoApp.API.Repositories
 
             _dbContext.Students.Update(record);
             await _dbContext.SaveChangesAsync();
-            return new StudentDto()
-            {
-                Id = record.Id,
-                FirstName = updateStudentRequestDto.FirstName,
-                LastName = updateStudentRequestDto.LastName,
-                PhoneNumber = updateStudentRequestDto.PhoneNumber,
-                Email = updateStudentRequestDto.Email,
-                Old = updateStudentRequestDto.Old,
-                AvataUrl = updateStudentRequestDto.AvataUrl
-            };
+            return mapper.Map<StudentDto>(record);
         }
     }
 }

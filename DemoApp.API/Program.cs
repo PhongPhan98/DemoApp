@@ -1,4 +1,5 @@
 using DemoApp.API.Data;
+using DemoApp.API.Mappings;
 using DemoApp.API.Repositories;
 using Microsoft.EntityFrameworkCore;
 
@@ -15,6 +16,7 @@ builder.Services.AddDbContext<DemoAppDbContext>(options => options.UseSqlServer(
 
 builder.Services.AddScoped<IRegionRepository, SQLRegionRepository>();
 builder.Services.AddScoped<IStudentRepository, SQLStudentRepository>();
+builder.Services.AddAutoMapper(typeof(AutoMapperProfile));
 
 var app = builder.Build();
 

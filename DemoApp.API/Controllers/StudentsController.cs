@@ -1,4 +1,5 @@
-﻿using DemoApp.API.Data;
+﻿using AutoMapper;
+using DemoApp.API.Data;
 using DemoApp.API.Models.DTO;
 using DemoApp.API.Repositories;
 using Microsoft.AspNetCore.Mvc;
@@ -11,35 +12,21 @@ namespace DemoApp.API.Controllers
     {
         private readonly DemoAppDbContext dbContext;
         private readonly IStudentRepository studentRepository;
+        private readonly IMapper mapper;
 
-        public StudentController(DemoAppDbContext dbContext, IStudentRepository studentRepository)
+        public StudentController(DemoAppDbContext dbContext, IStudentRepository studentRepository, IMapper mapper
+            )
         {
             this.dbContext = dbContext;
             this.studentRepository = studentRepository;
+            this.mapper = mapper;
         }
 
 
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
-            var studentsDomain = await studentRepository.GetAllAsync();
-
-            var studentsDto = new List<StudentDto>();
-
-            foreach (var student in studentsDomain)
-            {
-                studentsDto.Add(new StudentDto()
-                {
-                    Id = student.Id,
-                    FirstName = student.FirstName,
-                    LastName = student.LastName,
-                    PhoneNumber = student.PhoneNumber,
-                    Email = student.Email,
-                    Old = student.Old,
-                    AvataUrl = student.AvataUrl
-                });
-            }
-
+            var studentsDto = await studentRepository.GetAllAsync();
             return Ok(studentsDto);
 
         }
