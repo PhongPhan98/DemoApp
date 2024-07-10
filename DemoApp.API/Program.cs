@@ -14,6 +14,7 @@ builder.Services.AddDbContext<DemoAppDbContext>(options => options.UseSqlServer(
 
 
 builder.Services.AddScoped<IRegionRepository, SQLRegionRepository>();
+builder.Services.AddScoped<IStudentRepository, SQLStudentRepository>();
 
 var app = builder.Build();
 

@@ -8,7 +8,7 @@ namespace DemoApp.API.Repositories
         public Task<List<RegionDto>> GetAllAsync();
         public Task<RegionDto?> GetAsync(Guid regionId);
         public Task<RegionDto> CreateAsync(AddRegionRequestDto region);
-        public Task<RegionDto> UpdateAsync(Guid regionId, UpdateSudentRequestDto region);
+        public Task<RegionDto> UpdateAsync(Guid regionId, UpdateRegionRequestDto region);
         public Task<RegionDto?> DeleteAsync(Guid regionId);
     }
 }

@@ -104,7 +104,7 @@ namespace DemoApp.API.Repositories
             await _dbContext.SaveChangesAsync();
             return new StudentDto()
             {
-                Id = updateStudentRequestDto.Id,
+                Id = record.Id,
                 FirstName = updateStudentRequestDto.FirstName,
                 LastName = updateStudentRequestDto.LastName,
                 PhoneNumber = updateStudentRequestDto.PhoneNumber,

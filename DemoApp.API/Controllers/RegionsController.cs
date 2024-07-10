@@ -70,7 +70,7 @@ namespace DemoApp.API.Controllers
         // Update data
         [HttpPut]
         [Route("{id:Guid}")]
-        public async Task<IActionResult> Update([FromRoute] Guid id, [FromBody] UpdateSudentRequestDto updateRegionRequestDto)
+        public async Task<IActionResult> Update([FromRoute] Guid id, [FromBody] UpdateRegionRequestDto updateRegionRequestDto)
         {
             var record = await regionRepository.UpdateAsync(id, updateRegionRequestDto);
             if(record == null) return NotFound();

@@ -74,7 +74,7 @@ namespace DemoApp.API.Repositories
             };
         }
 
-        public async Task<RegionDto?> UpdateAsync(Guid regionId, UpdateSudentRequestDto updateRegionRequestDto)
+        public async Task<RegionDto?> UpdateAsync(Guid regionId, UpdateRegionRequestDto updateRegionRequestDto)
         {
             var record = await _dbContext.Regions.FindAsync(regionId);
             if (record == null) return null;
