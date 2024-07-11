@@ -27,17 +27,7 @@ namespace DemoApp.API.Repositories
 
         public async Task<StudentDto> CreateAsync(AddStudentRequestDto request)
         {
-            var record = new Student()
-            {
-                Id = request.Id,
-                FirstName = request.FirstName,
-                LastName = request.LastName,
-                PhoneNumber = request.PhoneNumber,
-                Email = request.Email,
-                Old = request.Old,
-                AvataUrl = request.AvataUrl
-            };
-
+            var record = mapper.Map<Student>(request);
             await _dbContext.Students.AddAsync(record);
             await _dbContext.SaveChangesAsync();
             return mapper.Map<StudentDto>(record);

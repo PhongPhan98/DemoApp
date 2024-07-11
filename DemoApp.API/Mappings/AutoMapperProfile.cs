@@ -9,6 +9,7 @@ namespace DemoApp.API.Mappings
         public AutoMapperProfile()
         {
             CreateMap<Student, StudentDto>().ReverseMap();
+            CreateMap<AddStudentRequestDto, Student>().ReverseMap();
         }
     }
 }
