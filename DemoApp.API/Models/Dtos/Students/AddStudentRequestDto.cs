@@ -1,6 +1,6 @@
-﻿namespace DemoApp.API.Models.DTO
+﻿namespace DemoApp.API.Models.DTO.Students
 {
-    public class StudentDto
+    public class AddStudentRequestDto
     {
         public Guid Id { get; set; }
         public string? FirstName { get; set; }

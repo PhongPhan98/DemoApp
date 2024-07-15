@@ -1,4 +1,5 @@
 using DemoApp.API.Data;
+using DemoApp.API.Interfaces;
 using DemoApp.API.Mappings;
 using DemoApp.API.Repositories;
 using Microsoft.EntityFrameworkCore;
@@ -13,9 +14,10 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<DemoAppDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DemoAppConnectionString")));
 
-
-builder.Services.AddScoped<IRegionRepository, SQLRegionRepository>();
 builder.Services.AddScoped<IStudentRepository, SQLStudentRepository>();
+builder.Services.AddScoped<IClassRepository, SQLClassRepository>();
+builder.Services.AddScoped<ITeacherRepository, SQLTeacherRepository>();
+
 builder.Services.AddAutoMapper(typeof(AutoMapperProfile));
 
 var app = builder.Build();

@@ -4,6 +4,7 @@ using DemoApp.API.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DemoApp.API.Migrations
 {
     [DbContext(typeof(DemoAppDbContext))]
-    partial class DemoAppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240715142055_Insert Teacher DB and Class DB")]
+    partial class InsertTeacherDBandClassDB
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -83,10 +86,6 @@ namespace DemoApp.API.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Age")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Phone")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 

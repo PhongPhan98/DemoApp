@@ -1,8 +1,8 @@
 ﻿using AutoMapper;
-using Azure.Core;
 using DemoApp.API.Data;
+using DemoApp.API.Interfaces;
 using DemoApp.API.Models.Domain;
-using DemoApp.API.Models.DTO;
+using DemoApp.API.Models.DTO.Students;
 using Microsoft.EntityFrameworkCore;
 
 namespace DemoApp.API.Repositories

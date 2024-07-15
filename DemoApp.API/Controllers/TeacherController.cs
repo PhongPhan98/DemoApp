@@ -1,24 +1,23 @@
 ﻿using AutoMapper;
 using DemoApp.API.Data;
 using DemoApp.API.Interfaces;
-using DemoApp.API.Models.DTO.Students;
+using DemoApp.API.Models.DTO.Teachers;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DemoApp.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class StudentController : ControllerBase
+    public class TeacherController : ControllerBase
     {
         private readonly DemoAppDbContext dbContext;
-        private readonly IStudentRepository studentRepository;
+        private readonly ITeacherRepository teacherRepository;
         private readonly IMapper mapper;
 
-        public StudentController(DemoAppDbContext dbContext, IStudentRepository studentRepository, IMapper mapper
-            )
+        public TeacherController(DemoAppDbContext dbContext, ITeacherRepository teacherRepository, IMapper mapper)
         {
             this.dbContext = dbContext;
-            this.studentRepository = studentRepository;
+            this.teacherRepository = teacherRepository;
             this.mapper = mapper;
         }
 
@@ -26,7 +25,7 @@ namespace DemoApp.API.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
-            var studentsDto = await studentRepository.GetAllAsync();
+            var studentsDto = await teacherRepository.GetAllAsync();
             return Ok(studentsDto);
 
         }
@@ -36,7 +35,7 @@ namespace DemoApp.API.Controllers
         [Route("{id:Guid}")]
         public async Task<IActionResult> GetByID([FromRoute] Guid id)
         {
-            var record = await studentRepository.GetAsync(id);
+            var record = await teacherRepository.GetAsync(id);
             if (record == null) return NotFound();
             return Ok(record);
 
@@ -44,20 +43,19 @@ namespace DemoApp.API.Controllers
 
         // Create new record
         [HttpPost]
-        public async Task<IActionResult> Create([FromBody] AddStudentRequestDto request)
+        public async Task<IActionResult> Create([FromBody] AddTeacherRequestDto request)
         {
-
-            var record = await studentRepository.CreateAsync(request);
+            var record = await teacherRepository.CreateAsync(request);
             if (record == null) return NotFound();
-            return CreatedAtAction(nameof(Create), new { id = record.Id }, record);
+            return CreatedAtAction(nameof(Create), new { id = record.TeacherId }, record);
         }
 
         // Update data
         [HttpPut]
         [Route("{id:Guid}")]
-        public async Task<IActionResult> Update([FromRoute] Guid id, [FromBody] UpdateStudentRequestDto updateStudentRequestDto)
+        public async Task<IActionResult> Update([FromRoute] Guid id, [FromBody] UpdateTeacherRequestDto updateTeacherRequestDto)
         {
-            var record = await studentRepository.UpdateAsync(id, updateStudentRequestDto);
+            var record = await teacherRepository.UpdateAsync(id, updateTeacherRequestDto);
             if (record == null) return NotFound();
             return Ok(record);
         }
@@ -68,7 +66,7 @@ namespace DemoApp.API.Controllers
         [Route("{id:Guid}")]
         public async Task<IActionResult> Delete([FromRoute] Guid id)
         {
-            var record = await studentRepository.DeleteAsync(id);
+            var record = await teacherRepository.DeleteAsync(id);
             if (record == null) return NotFound();
             return Ok(record);
         }

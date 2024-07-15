@@ -1,4 +1,4 @@
-﻿namespace DemoApp.API.Models.DTO
+﻿namespace DemoApp.API.Models.DTO.Students
 {
     public class UpdateStudentRequestDto
     {

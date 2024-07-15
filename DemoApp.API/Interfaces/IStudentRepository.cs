@@ -1,7 +1,6 @@
-﻿using DemoApp.API.Models.Domain;
-using DemoApp.API.Models.DTO;
+﻿using DemoApp.API.Models.DTO.Students;
 
-namespace DemoApp.API.Repositories
+namespace DemoApp.API.Interfaces
 {
     public interface IStudentRepository
     {
