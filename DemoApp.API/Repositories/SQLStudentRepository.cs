@@ -1,9 +1,11 @@
 ﻿using AutoMapper;
 using DemoApp.API.Data;
 using DemoApp.API.Interfaces;
+using DemoApp.API.Models;
 using DemoApp.API.Models.Domain;
 using DemoApp.API.Models.DTO.Students;
 using Microsoft.EntityFrameworkCore;
+using System.Numerics;
 
 namespace DemoApp.API.Repositories
 {
@@ -17,10 +19,22 @@ namespace DemoApp.API.Repositories
                this.mapper = mapper;
         }
 
-        public async Task<List<StudentDto>> GetAllAsync()
+        public async Task<PaginatedList<StudentDto>> GetAllAsync(int pageIndex, int pageSize)
         {
-            var studentDomainList = await _dbContext.Students.ToListAsync();
-            return mapper.Map<List<StudentDto>>(studentDomainList);
+            var students = await _dbContext.Students
+                .OrderBy(student => student.FirstName)
+                .Skip((pageIndex - 1)* pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+
+
+            var count = await _dbContext.Students.CountAsync();
+
+            var totalPages = (int)Math.Ceiling(count / (double)pageSize);
+
+            var result = mapper.Map<List<StudentDto>>(students);
+
+             return new PaginatedList<StudentDto>(result, pageIndex, totalPages);
            
         }
 

@@ -1,7 +1,9 @@
 ﻿using AutoMapper;
 using DemoApp.API.Data;
 using DemoApp.API.Interfaces;
+using DemoApp.API.Models;
 using DemoApp.API.Models.Domain;
+using DemoApp.API.Models.DTO.Students;
 using DemoApp.API.Models.DTO.Teachers;
 using Microsoft.EntityFrameworkCore;
 
@@ -17,11 +19,22 @@ namespace DemoApp.API.Repositories
                this.mapper = mapper;
         }
 
-        public async Task<List<TeacherDto>> GetAllAsync()
+        public async Task<PaginatedList<TeacherDto>> GetAllAsync(int pageIndex, int pageSize)
         {
-            var teacherDomainList = await _dbContext.Teachers.ToListAsync();
-            return mapper.Map<List<TeacherDto>>(teacherDomainList);
-           
+            var teachers = await _dbContext.Teachers
+                .OrderBy(teacher => teacher.TeacherName)
+                .Skip((pageIndex - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+
+            var count = await _dbContext.Teachers.CountAsync();
+
+            var totalPages = (int)Math.Ceiling(count / (double)pageSize);
+
+            var result = mapper.Map<List<TeacherDto>>(teachers);
+
+            return new PaginatedList<TeacherDto>(result, pageIndex, totalPages); ;
+
         }
 
         public async Task<TeacherDto> CreateAsync(AddTeacherRequestDto request)

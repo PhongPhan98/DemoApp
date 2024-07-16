@@ -1,8 +1,10 @@
 ﻿using AutoMapper;
 using DemoApp.API.Data;
 using DemoApp.API.Interfaces;
+using DemoApp.API.Models;
 using DemoApp.API.Models.Domain;
 using DemoApp.API.Models.DTO.Classes;
+using DemoApp.API.Models.DTO.Students;
 using Microsoft.EntityFrameworkCore;
 
 namespace DemoApp.API.Repositories
@@ -17,11 +19,23 @@ namespace DemoApp.API.Repositories
                this.mapper = mapper;
         }
 
-        public async Task<List<ClassDto>> GetAllAsync()
+        public async Task<PaginatedList<ClassDto>> GetAllAsync(int pageIndex, int pageSize)
         {
-            var classDomainList = await _dbContext.Classes.ToListAsync();
-            return mapper.Map<List<ClassDto>>(classDomainList);
-           
+            var classes = await _dbContext.Classes
+                .OrderBy(Class => Class.ClassName)
+                .Skip((pageIndex - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+
+
+            var count = await _dbContext.Classes.CountAsync();
+
+            var totalPages = (int)Math.Ceiling(count / (double)pageSize);
+
+            var result = mapper.Map<List<ClassDto>>(classes);
+
+            return new PaginatedList<ClassDto>(result, pageIndex, totalPages);
+
         }
 
 

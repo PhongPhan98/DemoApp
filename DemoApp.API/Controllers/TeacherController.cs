@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using DemoApp.API.Data;
 using DemoApp.API.Interfaces;
+using DemoApp.API.Models;
 using DemoApp.API.Models.DTO.Teachers;
 using Microsoft.AspNetCore.Mvc;
 
@@ -23,10 +24,10 @@ namespace DemoApp.API.Controllers
 
 
         [HttpGet]
-        public async Task<IActionResult> GetAll()
+        public async Task<ApiResponse> GetAll(int pageIndex = 1, int pageSize = 10)
         {
-            var studentsDto = await teacherRepository.GetAllAsync();
-            return Ok(studentsDto);
+            var teachers = await teacherRepository.GetAllAsync(pageIndex, pageSize);
+            return new ApiResponse(true, null, teachers);
 
         }
 
