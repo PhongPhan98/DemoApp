@@ -2,7 +2,10 @@ using DemoApp.API.Data;
 using DemoApp.API.Interfaces;
 using DemoApp.API.Mappings;
 using DemoApp.API.Repositories;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -19,6 +22,23 @@ builder.Services.AddScoped<IClassRepository, SQLClassRepository>();
 builder.Services.AddScoped<ITeacherRepository, SQLTeacherRepository>();
 
 builder.Services.AddAutoMapper(typeof(AutoMapperProfile));
+
+
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+       .AddJwtBearer(options =>
+       options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
+       {
+           ValidateIssuer = true,
+           ValidateAudience = true,
+           ValidateLifetime = true,
+           ValidateIssuerSigningKey = true,
+           ValidIssuer = builder.Configuration["Jwt:Issuer"],
+           ValidAudience = builder.Configuration["Jwt:Audience"],
+           IssuerSigningKey = new SymmetricSecurityKey(
+               Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
+
+       });
+
 
 var app = builder.Build();
 
