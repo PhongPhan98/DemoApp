@@ -3,6 +3,7 @@ using DemoApp.API.Data;
 using DemoApp.API.Interfaces;
 using DemoApp.API.Models;
 using DemoApp.API.Models.DTO.Students;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DemoApp.API.Controllers
@@ -11,20 +12,19 @@ namespace DemoApp.API.Controllers
     [ApiController]
     public class StudentController : ControllerBase
     {
-        private readonly DemoAppDbContext dbContext;
         private readonly IStudentRepository studentRepository;
         private readonly IMapper mapper;
 
-        public StudentController(DemoAppDbContext dbContext, IStudentRepository studentRepository, IMapper mapper
+        public StudentController(IStudentRepository studentRepository, IMapper mapper
             )
         {
-            this.dbContext = dbContext;
             this.studentRepository = studentRepository;
             this.mapper = mapper;
         }
 
 
         [HttpGet]
+        [Authorize(Roles = "Reader, Writer")]
         public async Task<ApiResponse> GetAll(int pageIndex = 1, int pageSize = 10)
         {
             var studentsDto = await studentRepository.GetAllAsync(pageIndex, pageSize);
@@ -33,6 +33,7 @@ namespace DemoApp.API.Controllers
 
         // Get by ID
         [HttpGet]
+        [Authorize(Roles = "Writer")]
         [Route("{id:Guid}")]
         public async Task<ApiResponse> GetByID([FromRoute] Guid id)
         {
@@ -44,6 +45,7 @@ namespace DemoApp.API.Controllers
 
         // Create new record
         [HttpPost]
+        [Authorize(Roles = "Writer")]
         public async Task<ApiResponse> Create([FromBody] AddStudentRequestDto request)
         {
 
@@ -54,6 +56,7 @@ namespace DemoApp.API.Controllers
 
         // Update data
         [HttpPut]
+        [Authorize(Roles = "Writer")]
         [Route("{id:Guid}")]
         public async Task<ApiResponse> Update([FromRoute] Guid id, [FromBody] UpdateStudentRequestDto updateStudentRequestDto)
         {
@@ -65,6 +68,7 @@ namespace DemoApp.API.Controllers
 
         // Delete data
         [HttpDelete]
+        [Authorize(Roles = "Writer")]
         [Route("{id:Guid}")]
         public async Task<ApiResponse> Delete([FromRoute] Guid id)
         {
