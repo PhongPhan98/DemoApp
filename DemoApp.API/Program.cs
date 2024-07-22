@@ -1,6 +1,7 @@
 using DemoApp.API.Data;
 using DemoApp.API.Interfaces;
 using DemoApp.API.Mappings;
+using DemoApp.API.Middlewares;
 using DemoApp.API.Repositories;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
@@ -45,8 +46,11 @@ builder.Services.AddSwaggerGen(options =>
         }
     });
 });
-builder.Services.AddDbContext<DemoAppDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DemoAppConnectionString")));
-builder.Services.AddDbContext<DemoAppAuthDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DemoAppAuthConnectionString")));
+builder.Services.AddDbContext<DemoAppDbContext>
+    (options => options.UseSqlServer(builder.Configuration.GetConnectionString("DemoAppConnectionString")));
+
+builder.Services.AddDbContext<DemoAppAuthDbContext>(
+    options => options.UseSqlServer(builder.Configuration.GetConnectionString("DemoAppAuthConnectionString")));
 
 builder.Services.AddScoped<IStudentRepository, SQLStudentRepository>();
 builder.Services.AddScoped<IClassRepository, SQLClassRepository>();
@@ -55,14 +59,11 @@ builder.Services.AddScoped<ITokenRepository, TokenRepository>();
 
 builder.Services.AddAutoMapper(typeof(AutoMapperProfile));
 
-
-
 builder.Services.AddIdentityCore<IdentityUser>()
     .AddRoles<IdentityRole>()
     .AddTokenProvider<DataProtectorTokenProvider<IdentityUser>>("DemoApp")
     .AddEntityFrameworkStores<DemoAppAuthDbContext>()
     .AddDefaultTokenProviders();
-
 
 builder.Services.Configure<IdentityOptions>(options =>
 {
@@ -73,7 +74,6 @@ builder.Services.Configure<IdentityOptions>(options =>
     options.Password.RequiredLength = 6;
     options.Password.RequiredUniqueChars = 1;
 });
-
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
        .AddJwtBearer(options =>
@@ -87,9 +87,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
            ValidAudience = builder.Configuration["Jwt:Audience"],
            IssuerSigningKey = new SymmetricSecurityKey(
                Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
-
        });
-
 
 var app = builder.Build();
 
@@ -102,10 +100,11 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-
-
 app.UseAuthentication();
+
 app.UseAuthorization();
+
+app.UseMiddleware<AdminSafeListMiddleware>(builder.Configuration["AdminSafeList"]);
 
 app.MapControllers();
 
