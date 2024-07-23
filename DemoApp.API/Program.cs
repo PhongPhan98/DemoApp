@@ -17,6 +17,10 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
+builder.Services.AddControllers();
+
+#region Logging
+
 var logger = new LoggerConfiguration()
     .WriteTo.Console()
     .WriteTo.File("Logs/DemoApp_Log.txt", rollingInterval: RollingInterval.Day)
@@ -27,7 +31,9 @@ builder.Logging.ClearProviders();
 
 builder.Logging.AddSerilog(logger);
 
-builder.Services.AddControllers();
+#endregion Logging
+
+#region Versioning and Authenticate for Swagger
 
 builder.Services.AddApiVersioning(options =>
 {
@@ -77,18 +83,34 @@ builder.Services.AddSwaggerGen(options =>
 
 builder.Services.ConfigureOptions<ConfigureSwaggerOptions>();
 
+#endregion Versioning and Authenticate for Swagger
+
+#region Database's connection
+
 builder.Services.AddDbContext<DemoAppDbContext>
     (options => options.UseSqlServer(builder.Configuration.GetConnectionString("DemoAppConnectionString")));
 
 builder.Services.AddDbContext<DemoAppAuthDbContext>(
     options => options.UseSqlServer(builder.Configuration.GetConnectionString("DemoAppAuthConnectionString")));
 
+#endregion Database's connection
+
+#region Repository Injection
+
 builder.Services.AddScoped<IStudentRepository, SQLStudentRepository>();
 builder.Services.AddScoped<IClassRepository, SQLClassRepository>();
 builder.Services.AddScoped<ITeacherRepository, SQLTeacherRepository>();
 builder.Services.AddScoped<ITokenRepository, TokenRepository>();
 
+#endregion Repository Injection
+
+#region Automapper configuration
+
 builder.Services.AddAutoMapper(typeof(AutoMapperProfile));
+
+#endregion Automapper configuration
+
+#region JWTToken Configuration
 
 builder.Services.AddIdentityCore<IdentityUser>()
     .AddRoles<IdentityRole>()
@@ -119,6 +141,8 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
            IssuerSigningKey = new SymmetricSecurityKey(
                Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
        });
+
+#endregion JWTToken Configuration
 
 var app = builder.Build();
 
