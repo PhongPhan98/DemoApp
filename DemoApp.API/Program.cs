@@ -116,6 +116,8 @@ app.UseAuthorization();
 
 app.UseMiddleware<AdminSafeListMiddleware>(builder.Configuration["AdminSafeList"]);
 
+app.UseMiddleware<ExceptionHandlerMiddleware>();
+
 app.MapControllers();
 
 app.Run();
