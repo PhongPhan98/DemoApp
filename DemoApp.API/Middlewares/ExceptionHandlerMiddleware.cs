@@ -14,7 +14,7 @@ namespace DemoApp.API.Middlewares
             this._logger = logger;
         }
 
-        public async Task invoke(HttpContext httpContext)
+        public async Task InvokeAsync(HttpContext httpContext)
         {
             try
             {
