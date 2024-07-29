@@ -7,65 +7,121 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace DemoApp.API.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/v{version:apiVersion}/[controller]")]
     [ApiController]
+    [ApiVersion("1.0")]
+    [ApiVersion("2.0")]
     public class TeacherController : ControllerBase
     {
         private readonly DemoAppDbContext dbContext;
         private readonly ITeacherRepository teacherRepository;
         private readonly IMapper mapper;
+        private readonly ILogger<TeacherController> logger;
 
-        public TeacherController(DemoAppDbContext dbContext, ITeacherRepository teacherRepository, IMapper mapper)
+        public TeacherController(DemoAppDbContext dbContext, ITeacherRepository teacherRepository, IMapper mapper, ILogger<TeacherController> logger)
         {
             this.dbContext = dbContext;
             this.teacherRepository = teacherRepository;
             this.mapper = mapper;
+            this.logger = logger;
         }
 
-
+        [MapToApiVersion("1.0")]
         [HttpGet]
-        public async Task<ApiResponse> GetAll(int pageIndex = 1, int pageSize = 10)
+        public async Task<ApiResponse> GetAllV1(int pageIndex = 1, int pageSize = 10)
         {
             var teachers = await teacherRepository.GetAllAsync(pageIndex, pageSize);
             return new ApiResponse(true, null, teachers);
+        }
 
+        [MapToApiVersion("2.0")]
+        [HttpGet]
+        public async Task<ApiResponse> GetAllV2(int pageIndex = 1, int pageSize = 10)
+        {
+            var teachers = await teacherRepository.GetAllAsync(pageIndex, pageSize);
+            return new ApiResponse(true, null, teachers);
         }
 
         // Get by ID
+        [MapToApiVersion("1.0")]
         [HttpGet]
         [Route("{id:Guid}")]
-        public async Task<IActionResult> GetByID([FromRoute] Guid id)
+        public async Task<IActionResult> GetByIDV1([FromRoute] Guid id)
         {
             var record = await teacherRepository.GetAsync(id);
             if (record == null) return NotFound();
             return Ok(record);
+        }
 
+        // Get by ID
+        [MapToApiVersion("2.0")]
+        [HttpGet]
+        [Route("{id:Guid}")]
+        public async Task<IActionResult> GetByIDV2([FromRoute] Guid id)
+        {
+            var record = await teacherRepository.GetAsync(id);
+            if (record == null) return NotFound();
+            return Ok(record);
         }
 
         // Create new record
+        [MapToApiVersion("1.0")]
         [HttpPost]
-        public async Task<IActionResult> Create([FromBody] AddTeacherRequestDto request)
+        public async Task<IActionResult> CreateV1([FromBody] AddTeacherRequestDto request)
         {
             var record = await teacherRepository.CreateAsync(request);
             if (record == null) return NotFound();
-            return CreatedAtAction(nameof(Create), new { id = record.TeacherId }, record);
+            return CreatedAtAction(nameof(CreateV1), new { id = record.TeacherId }, record);
+        }
+
+        // Create new record
+        [MapToApiVersion("2.0")]
+        [HttpPost]
+        public async Task<IActionResult> CreateV2([FromBody] AddTeacherRequestDto request)
+        {
+            var record = await teacherRepository.CreateAsync(request);
+            if (record == null) return NotFound();
+            return CreatedAtAction(nameof(CreateV2), new { id = record.TeacherId }, record);
         }
 
         // Update data
+        [MapToApiVersion("1.0")]
         [HttpPut]
         [Route("{id:Guid}")]
-        public async Task<IActionResult> Update([FromRoute] Guid id, [FromBody] UpdateTeacherRequestDto updateTeacherRequestDto)
+        public async Task<IActionResult> UpdateV1([FromRoute] Guid id, [FromBody] UpdateTeacherRequestDto updateTeacherRequestDto)
         {
             var record = await teacherRepository.UpdateAsync(id, updateTeacherRequestDto);
             if (record == null) return NotFound();
             return Ok(record);
         }
 
+        // Update data
+        [MapToApiVersion("2.0")]
+        [HttpPut]
+        [Route("{id:Guid}")]
+        public async Task<IActionResult> UpdateV2([FromRoute] Guid id, [FromBody] UpdateTeacherRequestDto updateTeacherRequestDto)
+        {
+            var record = await teacherRepository.UpdateAsync(id, updateTeacherRequestDto);
+            if (record == null) return NotFound();
+            return Ok(record);
+        }
 
         // Delete data
+        [MapToApiVersion("1.0")]
         [HttpDelete]
         [Route("{id:Guid}")]
-        public async Task<IActionResult> Delete([FromRoute] Guid id)
+        public async Task<IActionResult> DeleteV1([FromRoute] Guid id)
+        {
+            var record = await teacherRepository.DeleteAsync(id);
+            if (record == null) return NotFound();
+            return Ok(record);
+        }
+
+        // Delete data
+        [MapToApiVersion("2.0")]
+        [HttpDelete]
+        [Route("{id:Guid}")]
+        public async Task<IActionResult> DeleteV2([FromRoute] Guid id)
         {
             var record = await teacherRepository.DeleteAsync(id);
             if (record == null) return NotFound();

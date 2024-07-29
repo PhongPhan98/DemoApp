@@ -35,7 +35,7 @@ namespace DemoApp.API.Controllers
         public async Task<ApiResponse> GetAllV1(int pageIndex = 1, int pageSize = 10)
         {
             var studentsDto = await studentRepository.GetAllAsync(pageIndex, pageSize);
-            logger.LogInformation($"Finnshed get all of students: {JsonSerializer.Serialize(studentsDto)}");
+            logger.LogInformation($"Finnished get all of students: {JsonSerializer.Serialize(studentsDto)}");
             return new ApiResponse(true, null, studentsDto);
         }
 

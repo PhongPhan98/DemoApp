@@ -7,8 +7,10 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace DemoApp.API.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/v{version:apiVersion}/[controller]")]
     [ApiController]
+    [ApiVersion("1.0")]
+    [ApiVersion("2.0")]
     public class ClassController : ControllerBase
     {
         private readonly DemoAppDbContext dbContext;
@@ -22,51 +24,102 @@ namespace DemoApp.API.Controllers
             this.mapper = mapper;
         }
 
-
+        [MapToApiVersion("1.0")]
         [HttpGet]
-        public async Task<ApiResponse> GetAll(int pageIndex = 1, int pageSize = 10)
+        public async Task<ApiResponse> GetAllV1(int pageIndex = 1, int pageSize = 10)
         {
             var classes = await classRepository.GetAllAsync(pageIndex, pageSize);
             return new ApiResponse(true, null, classes);
+        }
 
+        [MapToApiVersion("2.0")]
+        [HttpGet]
+        public async Task<ApiResponse> GetAllV2(int pageIndex = 1, int pageSize = 10)
+        {
+            var classes = await classRepository.GetAllAsync(pageIndex, pageSize);
+            return new ApiResponse(true, null, classes);
         }
 
         // Get by ID
+        [MapToApiVersion("1.0")]
         [HttpGet]
         [Route("{id:Guid}")]
-        public async Task<IActionResult> GetByID([FromRoute] Guid id)
+        public async Task<IActionResult> GetByIDV1([FromRoute] Guid id)
         {
             var record = await classRepository.GetAsync(id);
             if (record == null) return NotFound();
             return Ok(record);
+        }
 
+        // Get by ID
+        [MapToApiVersion("2.0")]
+        [HttpGet]
+        [Route("{id:Guid}")]
+        public async Task<IActionResult> GetByIDV2([FromRoute] Guid id)
+        {
+            var record = await classRepository.GetAsync(id);
+            if (record == null) return NotFound();
+            return Ok(record);
         }
 
         // Create new record
+        [MapToApiVersion("1.0")]
         [HttpPost]
-        public async Task<IActionResult> Create([FromBody] AddClassRequestDto request)
+        public async Task<IActionResult> CreateV1([FromBody] AddClassRequestDto request)
         {
-
             var record = await classRepository.CreateAsync(request);
             if (record == null) return NotFound();
-            return CreatedAtAction(nameof(Create), new { id = record.ClassId }, record);
+            return CreatedAtAction(nameof(CreateV1), new { id = record.ClassId }, record);
+        }
+
+        // Create new record
+        [MapToApiVersion("2.0")]
+        [HttpPost]
+        public async Task<IActionResult> CreateV2([FromBody] AddClassRequestDto request)
+        {
+            var record = await classRepository.CreateAsync(request);
+            if (record == null) return NotFound();
+            return CreatedAtAction(nameof(CreateV2), new { id = record.ClassId }, record);
         }
 
         // Update data
+        [MapToApiVersion("1.0")]
         [HttpPut]
         [Route("{id:Guid}")]
-        public async Task<IActionResult> Update([FromRoute] Guid id, [FromBody] UpdateClassRequestDto updateClassRequestDto)
+        public async Task<IActionResult> UpdateV1([FromRoute] Guid id, [FromBody] UpdateClassRequestDto updateClassRequestDto)
         {
             var record = await classRepository.UpdateAsync(id, updateClassRequestDto);
             if (record == null) return NotFound();
             return Ok(record);
         }
 
+        // Update data
+        [MapToApiVersion("2.0")]
+        [HttpPut]
+        [Route("{id:Guid}")]
+        public async Task<IActionResult> UpdateV2([FromRoute] Guid id, [FromBody] UpdateClassRequestDto updateClassRequestDto)
+        {
+            var record = await classRepository.UpdateAsync(id, updateClassRequestDto);
+            if (record == null) return NotFound();
+            return Ok(record);
+        }
 
         // Delete data
+        [MapToApiVersion("1.0")]
         [HttpDelete]
         [Route("{id:Guid}")]
-        public async Task<IActionResult> Delete([FromRoute] Guid id)
+        public async Task<IActionResult> DeleteV1([FromRoute] Guid id)
+        {
+            var record = await classRepository.DeleteAsync(id);
+            if (record == null) return NotFound();
+            return Ok(record);
+        }
+
+        // Delete data
+        [MapToApiVersion("2.0")]
+        [HttpDelete]
+        [Route("{id:Guid}")]
+        public async Task<IActionResult> DeleteV2([FromRoute] Guid id)
         {
             var record = await classRepository.DeleteAsync(id);
             if (record == null) return NotFound();
