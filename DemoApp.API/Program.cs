@@ -3,12 +3,15 @@ using DemoApp.API.Data;
 using DemoApp.API.Interfaces;
 using DemoApp.API.Mappings;
 using DemoApp.API.Middlewares;
+using DemoApp.API.Models.Domain;
 using DemoApp.API.Repositories;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
+using Microsoft.AspNetCore.OData;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OData.ModelBuilder;
 using Microsoft.OpenApi.Models;
 using Serilog;
 using System.Text;
@@ -17,7 +20,19 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
-builder.Services.AddControllers();
+#region OData
+
+var modelBuilder = new ODataConventionModelBuilder();
+modelBuilder.EntitySet<Class>("Classes");
+modelBuilder.EntitySet<Student>("Students");
+modelBuilder.EntitySet<Teacher>("Teachers");
+
+builder.Services.AddControllers().AddOData(
+    options => options.Select().Filter().OrderBy().Expand().Count().SetMaxTop(null).AddRouteComponents(
+        "odata",
+        modelBuilder.GetEdmModel()));
+
+#endregion OData
 
 #region CORS
 

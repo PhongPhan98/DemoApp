@@ -6,6 +6,8 @@ using DemoApp.API.Models;
 using DemoApp.API.Models.DTO.Students;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.OData.Query;
+using Microsoft.AspNetCore.OData.Routing.Controllers;
 using System.Text.Json;
 
 namespace DemoApp.API.Controllers
@@ -14,23 +16,22 @@ namespace DemoApp.API.Controllers
     [ApiController]
     [ApiVersion("1.0")]
     [ApiVersion("2.0")]
-    public class StudentController : ControllerBase
+    public class StudentController : ODataController
     {
         private readonly IStudentRepository studentRepository;
-        private readonly IMapper mapper;
 
         public ILogger<StudentController> logger { get; }
 
-        public StudentController(IStudentRepository studentRepository, IMapper mapper, ILogger<StudentController> _logger
+        public StudentController(IStudentRepository studentRepository, ILogger<StudentController> _logger
             )
         {
             this.studentRepository = studentRepository;
-            this.mapper = mapper;
             logger = _logger;
         }
 
         [MapToApiVersion("1.0")]
         [HttpGet]
+        [EnableQuery]
         [Authorize(Roles = $"({Roles.Reader}, {Roles.Writer})")]
         public async Task<ApiResponse> GetAllV1(int pageIndex = 1, int pageSize = 10)
         {
@@ -41,6 +42,7 @@ namespace DemoApp.API.Controllers
 
         [MapToApiVersion("2.0")]
         [HttpGet]
+        [EnableQuery]
         [Authorize(Roles = $"({Roles.Reader}, {Roles.Writer})")]
         public async Task<ApiResponse> GetAllV2(int pageIndex = 1, int pageSize = 10)
         {
@@ -52,6 +54,7 @@ namespace DemoApp.API.Controllers
         // Get by ID
         [MapToApiVersion("1.0")]
         [HttpGet]
+        [EnableQuery]
         [Authorize(Roles = Roles.Writer)]
         [Route("{id:Guid}")]
         public async Task<ApiResponse> GetByID([FromRoute] Guid id)
@@ -63,6 +66,7 @@ namespace DemoApp.API.Controllers
 
         [MapToApiVersion("2.0")]
         [HttpGet]
+        [EnableQuery]
         [Authorize(Roles = Roles.Writer)]
         [Route("{id:Guid}")]
         public async Task<ApiResponse> GetByIDV2([FromRoute] Guid id)
