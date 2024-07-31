@@ -37,7 +37,7 @@ namespace DemoApp.API.Controllers
         {
             var studentsDto = await studentRepository.GetAllAsync(pageIndex, pageSize);
             logger.LogInformation($"Finnished get all of students: {JsonSerializer.Serialize(studentsDto)}");
-            return new ApiResponse(true, null, studentsDto);
+            return new ApiResponse(true, string.Empty, studentsDto);
         }
 
         [MapToApiVersion("2.0")]
@@ -48,7 +48,7 @@ namespace DemoApp.API.Controllers
         {
             var studentsDto = await studentRepository.GetAllAsync(pageIndex, pageSize);
             logger.LogInformation($"Finnshed get all of students: {JsonSerializer.Serialize(studentsDto)}");
-            return new ApiResponse(true, null, studentsDto);
+            return new ApiResponse(true, string.Empty, studentsDto);
         }
 
         // Get by ID
@@ -60,8 +60,8 @@ namespace DemoApp.API.Controllers
         public async Task<ApiResponse> GetByID([FromRoute] Guid id)
         {
             var record = await studentRepository.GetAsync(id);
-            if (record == null) return new ApiResponse(false, "Not found", null);
-            return new ApiResponse(true, null, record);
+            if (record == null) return new ApiResponse(false, "Not found", new Object());
+            return new ApiResponse(true, string.Empty, record);
         }
 
         [MapToApiVersion("2.0")]
@@ -72,8 +72,8 @@ namespace DemoApp.API.Controllers
         public async Task<ApiResponse> GetByIDV2([FromRoute] Guid id)
         {
             var record = await studentRepository.GetAsync(id);
-            if (record == null) return new ApiResponse(false, "Not found", null);
-            return new ApiResponse(true, null, record);
+            if (record == null) return new ApiResponse(false, "Not found", new Object());
+            return new ApiResponse(true, string.Empty, record);
         }
 
         // Create new record
@@ -83,8 +83,8 @@ namespace DemoApp.API.Controllers
         public async Task<ApiResponse> Create([FromBody] AddStudentRequestDto request)
         {
             var record = await studentRepository.CreateAsync(request);
-            if (record == null) return new ApiResponse(false, "Not found", null);
-            return new ApiResponse(true, null, record);
+            if (record == null) return new ApiResponse(false, "Not found", new Object());
+            return new ApiResponse(true, string.Empty, record);
         }
 
         [MapToApiVersion("2.0")]
@@ -93,8 +93,8 @@ namespace DemoApp.API.Controllers
         public async Task<ApiResponse> CreateV2([FromBody] AddStudentRequestDto request)
         {
             var record = await studentRepository.CreateAsync(request);
-            if (record == null) return new ApiResponse(false, "Not found", null);
-            return new ApiResponse(true, null, record);
+            if (record == null) return new ApiResponse(false, "Not found", new Object());
+            return new ApiResponse(true, string.Empty, record);
         }
 
         // Update data
@@ -105,8 +105,8 @@ namespace DemoApp.API.Controllers
         public async Task<ApiResponse> Update([FromRoute] Guid id, [FromBody] UpdateStudentRequestDto updateStudentRequestDto)
         {
             var record = await studentRepository.UpdateAsync(id, updateStudentRequestDto);
-            if (record == null) return new ApiResponse(false, "Not found", null);
-            return new ApiResponse(true, null, record);
+            if (record == null) return new ApiResponse(false, "Not found", new Object());
+            return new ApiResponse(true, string.Empty, record);
         }
 
         [MapToApiVersion("2.0")]
@@ -116,8 +116,8 @@ namespace DemoApp.API.Controllers
         public async Task<ApiResponse> UpdateV2([FromRoute] Guid id, [FromBody] UpdateStudentRequestDto updateStudentRequestDto)
         {
             var record = await studentRepository.UpdateAsync(id, updateStudentRequestDto);
-            if (record == null) return new ApiResponse(false, "Not found", null);
-            return new ApiResponse(true, null, record);
+            if (record == null) return new ApiResponse(false, "Not found", new Object());
+            return new ApiResponse(true, string.Empty, record);
         }
 
         // Delete data
@@ -129,9 +129,9 @@ namespace DemoApp.API.Controllers
         {
             var record = await studentRepository.DeleteAsync(id);
 
-            if (record == null) return new ApiResponse(false, "Not found", null);
+            if (record == null) return new ApiResponse(false, "Not found", new Object());
 
-            return new ApiResponse(true, null, record);
+            return new ApiResponse(true, string.Empty, record);
         }
 
         [MapToApiVersion("2.0")]
@@ -141,8 +141,8 @@ namespace DemoApp.API.Controllers
         public async Task<ApiResponse> DeleteV2([FromRoute] Guid id)
         {
             var record = await studentRepository.DeleteAsync(id);
-            if (record == null) return new ApiResponse(false, "Not found", null);
-            return new ApiResponse(true, null, record);
+            if (record == null) return new ApiResponse(false, "Not found", new Object());
+            return new ApiResponse(true, string.Empty, record);
         }
     }
 }

@@ -34,7 +34,7 @@ namespace DemoApp.API.Controllers
         public async Task<ApiResponse> GetAllV1(int pageIndex = 1, int pageSize = 10)
         {
             var teachers = await teacherRepository.GetAllAsync(pageIndex, pageSize);
-            return new ApiResponse(true, null, teachers);
+            return new ApiResponse(true, string.Empty, teachers);
         }
 
         [MapToApiVersion("2.0")]
@@ -43,7 +43,7 @@ namespace DemoApp.API.Controllers
         public async Task<ApiResponse> GetAllV2(int pageIndex = 1, int pageSize = 10)
         {
             var teachers = await teacherRepository.GetAllAsync(pageIndex, pageSize);
-            return new ApiResponse(true, null, teachers);
+            return new ApiResponse(true, string.Empty, teachers);
         }
 
         // Get by ID

@@ -32,7 +32,7 @@ namespace DemoApp.API.Controllers
         public async Task<ApiResponse> GetAllV1(int pageIndex = 1, int pageSize = 10)
         {
             var classes = await classRepository.GetAllAsync(pageIndex, pageSize);
-            return new ApiResponse(true, null, classes);
+            return new ApiResponse(true, string.Empty, classes);
         }
 
         [MapToApiVersion("2.0")]
@@ -41,7 +41,7 @@ namespace DemoApp.API.Controllers
         public async Task<ApiResponse> GetAllV2(int pageIndex = 1, int pageSize = 10)
         {
             var classes = await classRepository.GetAllAsync(pageIndex, pageSize);
-            return new ApiResponse(true, null, classes);
+            return new ApiResponse(true, string.Empty, classes);
         }
 
         // Get by ID
