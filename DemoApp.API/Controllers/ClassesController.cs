@@ -1,8 +1,10 @@
 ﻿using AutoMapper;
+using Azure.Core;
 using DemoApp.API.Data;
 using DemoApp.API.Interfaces;
 using DemoApp.API.Models;
 using DemoApp.API.Models.DTO.Classes;
+using DemoApp.API.Models.DTO.Students;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.OData.Query;
 using Microsoft.AspNetCore.OData.Routing.Controllers;
@@ -71,6 +73,10 @@ namespace DemoApp.API.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateV1([FromBody] AddClassRequestDto request)
         {
+            if (!ValidateCreateAsync(request))
+            {
+                return BadRequest();
+            }
             var record = await classRepository.CreateAsync(request);
             if (record == null) return NotFound();
             return CreatedAtAction(nameof(CreateV1), new { id = record.ClassId }, record);
@@ -81,6 +87,10 @@ namespace DemoApp.API.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateV2([FromBody] AddClassRequestDto request)
         {
+            if (!ValidateCreateAsync(request))
+            {
+                return BadRequest();
+            }
             var record = await classRepository.CreateAsync(request);
             if (record == null) return NotFound();
             return CreatedAtAction(nameof(CreateV2), new { id = record.ClassId }, record);
@@ -92,6 +102,10 @@ namespace DemoApp.API.Controllers
         [Route("{id:Guid}")]
         public async Task<IActionResult> UpdateV1([FromRoute] Guid id, [FromBody] UpdateClassRequestDto updateClassRequestDto)
         {
+            if (!ValidateUpdateAsync(updateClassRequestDto))
+            {
+                return BadRequest();
+            }
             var record = await classRepository.UpdateAsync(id, updateClassRequestDto);
             if (record == null) return NotFound();
             return Ok(record);
@@ -103,6 +117,10 @@ namespace DemoApp.API.Controllers
         [Route("{id:Guid}")]
         public async Task<IActionResult> UpdateV2([FromRoute] Guid id, [FromBody] UpdateClassRequestDto updateClassRequestDto)
         {
+            if (!ValidateUpdateAsync(updateClassRequestDto))
+            {
+                return BadRequest();
+            }
             var record = await classRepository.UpdateAsync(id, updateClassRequestDto);
             if (record == null) return NotFound();
             return Ok(record);
@@ -129,5 +147,65 @@ namespace DemoApp.API.Controllers
             if (record == null) return NotFound();
             return Ok(record);
         }
+
+        #region Private methods
+
+        private bool ValidateCreateAsync(AddClassRequestDto request)
+        {
+            if (request == null)
+            {
+                ModelState.AddModelError(nameof(AddClassRequestDto),
+                   $"{nameof(AddClassRequestDto)} can not be null.");
+            }
+
+            if (string.IsNullOrWhiteSpace(request.ClassName))
+            {
+                ModelState.AddModelError(nameof(request.ClassName),
+                    $"{nameof(request.ClassName)} can not be empty or white space.");
+            }
+
+            if (string.IsNullOrWhiteSpace(request.Description))
+            {
+                ModelState.AddModelError(nameof(request.Description),
+                    $"{nameof(request.Description)} can not be empty or white space.");
+            }
+
+            if (ModelState.ErrorCount > 0)
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+        private bool ValidateUpdateAsync(UpdateClassRequestDto request)
+        {
+            if (request == null)
+            {
+                ModelState.AddModelError(nameof(UpdateClassRequestDto),
+                   $"{nameof(UpdateClassRequestDto)} can not be null.");
+            }
+
+            if (string.IsNullOrWhiteSpace(request.ClassName))
+            {
+                ModelState.AddModelError(nameof(request.ClassName),
+                    $"{nameof(request.ClassName)} can not be empty or white space.");
+            }
+
+            if (string.IsNullOrWhiteSpace(request.Description))
+            {
+                ModelState.AddModelError(nameof(request.Description),
+                    $"{nameof(request.Description)} can not be empty or white space.");
+            }
+
+            if (ModelState.ErrorCount > 0)
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+        #endregion Private methods
     }
 }

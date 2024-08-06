@@ -73,6 +73,10 @@ namespace DemoApp.API.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateV1([FromBody] AddTeacherRequestDto request)
         {
+            if (!ValidateCreateAsync(request))
+            {
+                return BadRequest();
+            }
             var record = await teacherRepository.CreateAsync(request);
             if (record == null) return NotFound();
             return CreatedAtAction(nameof(CreateV1), new { id = record.TeacherId }, record);
@@ -83,6 +87,10 @@ namespace DemoApp.API.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateV2([FromBody] AddTeacherRequestDto request)
         {
+            if (!ValidateCreateAsync(request))
+            {
+                return BadRequest();
+            }
             var record = await teacherRepository.CreateAsync(request);
             if (record == null) return NotFound();
             return CreatedAtAction(nameof(CreateV2), new { id = record.TeacherId }, record);
@@ -94,6 +102,10 @@ namespace DemoApp.API.Controllers
         [Route("{id:Guid}")]
         public async Task<IActionResult> UpdateV1([FromRoute] Guid id, [FromBody] UpdateTeacherRequestDto updateTeacherRequestDto)
         {
+            if (!ValidateUpdateAsync(updateTeacherRequestDto))
+            {
+                return BadRequest();
+            }
             var record = await teacherRepository.UpdateAsync(id, updateTeacherRequestDto);
             if (record == null) return NotFound();
             return Ok(record);
@@ -105,6 +117,10 @@ namespace DemoApp.API.Controllers
         [Route("{id:Guid}")]
         public async Task<IActionResult> UpdateV2([FromRoute] Guid id, [FromBody] UpdateTeacherRequestDto updateTeacherRequestDto)
         {
+            if (!ValidateUpdateAsync(updateTeacherRequestDto))
+            {
+                return BadRequest();
+            }
             var record = await teacherRepository.UpdateAsync(id, updateTeacherRequestDto);
             if (record == null) return NotFound();
             return Ok(record);
@@ -131,5 +147,83 @@ namespace DemoApp.API.Controllers
             if (record == null) return NotFound();
             return Ok(record);
         }
+
+        #region Private methods
+
+        private bool ValidateCreateAsync(AddTeacherRequestDto request)
+        {
+            if (request == null)
+            {
+                ModelState.AddModelError(nameof(AddTeacherRequestDto),
+                   $"{nameof(AddTeacherRequestDto)} can not be null.");
+            }
+
+            if (string.IsNullOrWhiteSpace(request.TeacherName))
+            {
+                ModelState.AddModelError(nameof(request.TeacherName),
+                    $"{nameof(request.TeacherName)} can not be empty or white space.");
+            }
+
+            if (string.IsNullOrWhiteSpace(request.Phone))
+            {
+                ModelState.AddModelError(nameof(request.Phone),
+                    $"{nameof(request.Phone)} can not be empty or white space.");
+            }
+
+            int ageOfTeacher = 0;
+            var isAgeValid = int.TryParse(request.Age, out ageOfTeacher);
+
+            if (!isAgeValid || ageOfTeacher <= 0)
+            {
+                ModelState.AddModelError(nameof(request.Age),
+                    $"{nameof(request.Age)} can not less than or equals zero.");
+            }
+
+            if (ModelState.ErrorCount > 0)
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+        private bool ValidateUpdateAsync(UpdateTeacherRequestDto request)
+        {
+            if (request == null)
+            {
+                ModelState.AddModelError(nameof(UpdateTeacherRequestDto),
+                   $"{nameof(UpdateTeacherRequestDto)} can not be null.");
+            }
+
+            if (string.IsNullOrWhiteSpace(request.TeacherName))
+            {
+                ModelState.AddModelError(nameof(request.TeacherName),
+                    $"{nameof(request.TeacherName)} can not be empty or white space.");
+            }
+
+            if (string.IsNullOrWhiteSpace(request.Phone))
+            {
+                ModelState.AddModelError(nameof(request.Phone),
+                    $"{nameof(request.Phone)} can not be empty or white space.");
+            }
+
+            int ageOfTeacher = 0;
+            var isAgeValid = int.TryParse(request.Age, out ageOfTeacher);
+
+            if (!isAgeValid || ageOfTeacher <= 0)
+            {
+                ModelState.AddModelError(nameof(request.Age),
+                    $"{nameof(request.Age)} can not less than or equals zero.");
+            }
+
+            if (ModelState.ErrorCount > 0)
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+        #endregion Private methods
     }
 }

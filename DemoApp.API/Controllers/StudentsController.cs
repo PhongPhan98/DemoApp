@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Azure.Core;
 using DemoApp.API.Constants;
 using DemoApp.API.Data;
 using DemoApp.API.Interfaces;
@@ -6,6 +7,7 @@ using DemoApp.API.Models;
 using DemoApp.API.Models.DTO.Students;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.OData.Query;
 using Microsoft.AspNetCore.OData.Routing.Controllers;
 using System.Text.Json;
@@ -82,6 +84,11 @@ namespace DemoApp.API.Controllers
         [Authorize(Roles = Roles.Writer)]
         public async Task<ApiResponse> Create([FromBody] AddStudentRequestDto request)
         {
+            if (!ValidateCreateAsync(request))
+            {
+                return new ApiResponse(false, "Bad request", new Object());
+            }
+
             var record = await studentRepository.CreateAsync(request);
             if (record == null) return new ApiResponse(false, "Not found", new Object());
             return new ApiResponse(true, string.Empty, record);
@@ -92,6 +99,10 @@ namespace DemoApp.API.Controllers
         [Authorize(Roles = Roles.Writer)]
         public async Task<ApiResponse> CreateV2([FromBody] AddStudentRequestDto request)
         {
+            if (!ValidateCreateAsync(request))
+            {
+                return new ApiResponse(false, "Bad request", new Object());
+            }
             var record = await studentRepository.CreateAsync(request);
             if (record == null) return new ApiResponse(false, "Not found", new Object());
             return new ApiResponse(true, string.Empty, record);
@@ -104,6 +115,10 @@ namespace DemoApp.API.Controllers
         [Route("{id:Guid}")]
         public async Task<ApiResponse> Update([FromRoute] Guid id, [FromBody] UpdateStudentRequestDto updateStudentRequestDto)
         {
+            if (!ValidateUpdateAsync(updateStudentRequestDto))
+            {
+                return new ApiResponse(false, "Bad request", new Object());
+            }
             var record = await studentRepository.UpdateAsync(id, updateStudentRequestDto);
             if (record == null) return new ApiResponse(false, "Not found", new Object());
             return new ApiResponse(true, string.Empty, record);
@@ -115,6 +130,10 @@ namespace DemoApp.API.Controllers
         [Route("{id:Guid}")]
         public async Task<ApiResponse> UpdateV2([FromRoute] Guid id, [FromBody] UpdateStudentRequestDto updateStudentRequestDto)
         {
+            if (!ValidateUpdateAsync(updateStudentRequestDto))
+            {
+                return new ApiResponse(false, "Bad request", new Object());
+            }
             var record = await studentRepository.UpdateAsync(id, updateStudentRequestDto);
             if (record == null) return new ApiResponse(false, "Not found", new Object());
             return new ApiResponse(true, string.Empty, record);
@@ -144,5 +163,113 @@ namespace DemoApp.API.Controllers
             if (record == null) return new ApiResponse(false, "Not found", new Object());
             return new ApiResponse(true, string.Empty, record);
         }
+
+        #region Private methods
+
+        private bool ValidateCreateAsync(AddStudentRequestDto request)
+        {
+            if (request == null)
+            {
+                ModelState.AddModelError(nameof(AddStudentRequestDto),
+                   $"{nameof(AddStudentRequestDto)} can not be null.");
+            }
+
+            if (string.IsNullOrWhiteSpace(request.FirstName))
+            {
+                ModelState.AddModelError(nameof(request.FirstName),
+                    $"{nameof(request.FirstName)} can not be empty or white space.");
+            }
+
+            if (string.IsNullOrWhiteSpace(request.LastName))
+            {
+                ModelState.AddModelError(nameof(request.LastName),
+                    $"{nameof(request.LastName)} can not be empty or white space.");
+            }
+
+            if (string.IsNullOrWhiteSpace(request.PhoneNumber))
+            {
+                ModelState.AddModelError(nameof(request.PhoneNumber),
+                    $"{nameof(request.PhoneNumber)} can not be empty or white space.");
+            }
+
+            if (string.IsNullOrWhiteSpace(request.Email))
+            {
+                ModelState.AddModelError(nameof(request.Email),
+                    $"{nameof(request.Email)} can not be empty or white space.");
+            }
+
+            if (request.Old <= 0)
+            {
+                ModelState.AddModelError(nameof(request.Old),
+                    $"{nameof(request.Old)} can not less than or equals zero.");
+            }
+
+            if (string.IsNullOrWhiteSpace(request.AvataUrl))
+            {
+                ModelState.AddModelError(nameof(request.AvataUrl),
+                    $"{nameof(request.AvataUrl)} can not be empty or white space.");
+            }
+
+            if (ModelState.ErrorCount > 0)
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+        private bool ValidateUpdateAsync(UpdateStudentRequestDto request)
+        {
+            if (request == null)
+            {
+                ModelState.AddModelError(nameof(UpdateStudentRequestDto),
+                   $"{nameof(UpdateStudentRequestDto)} can not be null.");
+            }
+
+            if (string.IsNullOrWhiteSpace(request.FirstName))
+            {
+                ModelState.AddModelError(nameof(request.FirstName),
+                    $"{nameof(request.FirstName)} can not be empty or white space.");
+            }
+
+            if (string.IsNullOrWhiteSpace(request.LastName))
+            {
+                ModelState.AddModelError(nameof(request.LastName),
+                    $"{nameof(request.LastName)} can not be empty or white space.");
+            }
+
+            if (string.IsNullOrWhiteSpace(request.PhoneNumber))
+            {
+                ModelState.AddModelError(nameof(request.PhoneNumber),
+                    $"{nameof(request.PhoneNumber)} can not be empty or white space.");
+            }
+
+            if (string.IsNullOrWhiteSpace(request.Email))
+            {
+                ModelState.AddModelError(nameof(request.Email),
+                    $"{nameof(request.Email)} can not be empty or white space.");
+            }
+
+            if (request.Old <= 0)
+            {
+                ModelState.AddModelError(nameof(request.Old),
+                    $"{nameof(request.Old)} can not less than or equals zero.");
+            }
+
+            if (string.IsNullOrWhiteSpace(request.AvataUrl))
+            {
+                ModelState.AddModelError(nameof(request.AvataUrl),
+                    $"{nameof(request.AvataUrl)} can not be empty or white space.");
+            }
+
+            if (ModelState.ErrorCount > 0)
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+        #endregion Private methods
     }
 }
