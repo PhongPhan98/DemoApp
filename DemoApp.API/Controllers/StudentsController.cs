@@ -1,13 +1,10 @@
-﻿using AutoMapper;
-using Azure.Core;
+﻿using Azure.Core;
 using DemoApp.API.Constants;
-using DemoApp.API.Data;
 using DemoApp.API.Interfaces;
 using DemoApp.API.Models;
 using DemoApp.API.Models.DTO.Students;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.OData.Query;
 using Microsoft.AspNetCore.OData.Routing.Controllers;
 using System.Text.Json;
@@ -37,8 +34,9 @@ namespace DemoApp.API.Controllers
         [Authorize(Roles = $"({Roles.Reader}, {Roles.Writer})")]
         public async Task<ApiResponse> GetAllV1(int pageIndex = 1, int pageSize = 10)
         {
+            logger.LogInformation($"StudentController >> GetAllV1 >>  pageIndex :{pageIndex},  pageSize: {pageSize}");
             var studentsDto = await studentRepository.GetAllAsync(pageIndex, pageSize);
-            logger.LogInformation($"Finnished get all of students: {JsonSerializer.Serialize(studentsDto)}");
+            logger.LogInformation($"StudentController >> GetAllV1 >> Finnished get all of students: {JsonSerializer.Serialize(studentsDto)}");
             return new ApiResponse(true, string.Empty, studentsDto);
         }
 
@@ -48,8 +46,9 @@ namespace DemoApp.API.Controllers
         [Authorize(Roles = $"({Roles.Reader}, {Roles.Writer})")]
         public async Task<ApiResponse> GetAllV2(int pageIndex = 1, int pageSize = 10)
         {
+            logger.LogInformation($"StudentController >> GetAllV2 >>  pageIndex :{pageIndex},  pageSize: {pageSize}");
             var studentsDto = await studentRepository.GetAllAsync(pageIndex, pageSize);
-            logger.LogInformation($"Finnshed get all of students: {JsonSerializer.Serialize(studentsDto)}");
+            logger.LogInformation($"StudentController >> GetAllV2 >> Finnshed get all of students: {JsonSerializer.Serialize(studentsDto)}");
             return new ApiResponse(true, string.Empty, studentsDto);
         }
 
@@ -61,6 +60,7 @@ namespace DemoApp.API.Controllers
         [Route("{id:Guid}")]
         public async Task<ApiResponse> GetByID([FromRoute] Guid id)
         {
+            logger.LogInformation($"StudentsController >> GetByIDV1 >> ID: {id}");
             var record = await studentRepository.GetAsync(id);
             if (record == null) return new ApiResponse(false, "Not found", new Object());
             return new ApiResponse(true, string.Empty, record);
@@ -73,6 +73,7 @@ namespace DemoApp.API.Controllers
         [Route("{id:Guid}")]
         public async Task<ApiResponse> GetByIDV2([FromRoute] Guid id)
         {
+            logger.LogInformation($"StudentsController >> GetByIDV2 >> ID: {id}");
             var record = await studentRepository.GetAsync(id);
             if (record == null) return new ApiResponse(false, "Not found", new Object());
             return new ApiResponse(true, string.Empty, record);
@@ -84,6 +85,7 @@ namespace DemoApp.API.Controllers
         [Authorize(Roles = Roles.Writer)]
         public async Task<ApiResponse> Create([FromBody] AddStudentRequestDto request)
         {
+            logger.LogInformation($"StudentsController >> CreateV1 >> AddStudentRequestDto:  {JsonSerializer.Serialize(request)}");
             if (!ValidateCreateAsync(request))
             {
                 return new ApiResponse(false, "Bad request", new Object());
@@ -99,6 +101,7 @@ namespace DemoApp.API.Controllers
         [Authorize(Roles = Roles.Writer)]
         public async Task<ApiResponse> CreateV2([FromBody] AddStudentRequestDto request)
         {
+            logger.LogInformation($"StudentsController >> CreateV2 >> AddStudentRequestDto:  {JsonSerializer.Serialize(request)}");
             if (!ValidateCreateAsync(request))
             {
                 return new ApiResponse(false, "Bad request", new Object());
@@ -115,6 +118,7 @@ namespace DemoApp.API.Controllers
         [Route("{id:Guid}")]
         public async Task<ApiResponse> Update([FromRoute] Guid id, [FromBody] UpdateStudentRequestDto updateStudentRequestDto)
         {
+            logger.LogInformation($"StudentsController >> UpdateV1 >> UpdateStudentRequestDto:  {JsonSerializer.Serialize(updateStudentRequestDto)}; ID: {id}");
             if (!ValidateUpdateAsync(updateStudentRequestDto))
             {
                 return new ApiResponse(false, "Bad request", new Object());
@@ -130,6 +134,7 @@ namespace DemoApp.API.Controllers
         [Route("{id:Guid}")]
         public async Task<ApiResponse> UpdateV2([FromRoute] Guid id, [FromBody] UpdateStudentRequestDto updateStudentRequestDto)
         {
+            logger.LogInformation($"StudentsController >> UpdateV2 >> UpdateStudentRequestDto:  {JsonSerializer.Serialize(updateStudentRequestDto)}; ID: {id}");
             if (!ValidateUpdateAsync(updateStudentRequestDto))
             {
                 return new ApiResponse(false, "Bad request", new Object());
@@ -146,6 +151,7 @@ namespace DemoApp.API.Controllers
         [Route("{id:Guid}")]
         public async Task<ApiResponse> Delete([FromRoute] Guid id)
         {
+            logger.LogInformation($"StudentsController >> DeleteV1 >> ID: {id}");
             var record = await studentRepository.DeleteAsync(id);
 
             if (record == null) return new ApiResponse(false, "Not found", new Object());
@@ -159,6 +165,7 @@ namespace DemoApp.API.Controllers
         [Route("{id:Guid}")]
         public async Task<ApiResponse> DeleteV2([FromRoute] Guid id)
         {
+            logger.LogInformation($"StudentsController >> DeleteV2 >> ID: {id}");
             var record = await studentRepository.DeleteAsync(id);
             if (record == null) return new ApiResponse(false, "Not found", new Object());
             return new ApiResponse(true, string.Empty, record);

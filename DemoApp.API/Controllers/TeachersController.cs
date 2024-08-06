@@ -2,10 +2,12 @@
 using DemoApp.API.Data;
 using DemoApp.API.Interfaces;
 using DemoApp.API.Models;
+using DemoApp.API.Models.DTO.Students;
 using DemoApp.API.Models.DTO.Teachers;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.OData.Query;
 using Microsoft.AspNetCore.OData.Routing.Controllers;
+using System.Text.Json;
 
 namespace DemoApp.API.Controllers
 {
@@ -33,7 +35,9 @@ namespace DemoApp.API.Controllers
         [EnableQuery]
         public async Task<ApiResponse> GetAllV1(int pageIndex = 1, int pageSize = 10)
         {
+            logger.LogInformation($"TeachersController >> GetAllV1 >>  pageIndex :{pageIndex},  pageSize: {pageSize}");
             var teachers = await teacherRepository.GetAllAsync(pageIndex, pageSize);
+            logger.LogInformation($"TeachersController >> GetAllV1 >>  Finnished get all of teachers: {JsonSerializer.Serialize(teachers)}");
             return new ApiResponse(true, string.Empty, teachers);
         }
 
@@ -42,7 +46,9 @@ namespace DemoApp.API.Controllers
         [EnableQuery]
         public async Task<ApiResponse> GetAllV2(int pageIndex = 1, int pageSize = 10)
         {
+            logger.LogInformation($"TeachersController >> GetAllV1 >>  pageIndex :{pageIndex},  pageSize: {pageSize}");
             var teachers = await teacherRepository.GetAllAsync(pageIndex, pageSize);
+            logger.LogInformation($"TeachersController >> GetAllV2 >>  Finnished get all of teachers: {JsonSerializer.Serialize(teachers)}");
             return new ApiResponse(true, string.Empty, teachers);
         }
 
@@ -52,6 +58,7 @@ namespace DemoApp.API.Controllers
         [Route("{id:Guid}")]
         public async Task<IActionResult> GetByIDV1([FromRoute] Guid id)
         {
+            logger.LogInformation($"TeachersController >> GetByIDV1 >> ID: {id}");
             var record = await teacherRepository.GetAsync(id);
             if (record == null) return NotFound();
             return Ok(record);
@@ -63,6 +70,7 @@ namespace DemoApp.API.Controllers
         [Route("{id:Guid}")]
         public async Task<IActionResult> GetByIDV2([FromRoute] Guid id)
         {
+            logger.LogInformation($"TeachersController >> GetByIDV2 >> ID: {id}");
             var record = await teacherRepository.GetAsync(id);
             if (record == null) return NotFound();
             return Ok(record);
@@ -73,6 +81,7 @@ namespace DemoApp.API.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateV1([FromBody] AddTeacherRequestDto request)
         {
+            logger.LogInformation($"TeachersController >> CreateV1 >> AddTeacherRequestDto:  {JsonSerializer.Serialize(request)}");
             if (!ValidateCreateAsync(request))
             {
                 return BadRequest();
@@ -87,6 +96,7 @@ namespace DemoApp.API.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateV2([FromBody] AddTeacherRequestDto request)
         {
+            logger.LogInformation($"TeachersController >> CreateV2 >> AddTeacherRequestDto:  {JsonSerializer.Serialize(request)}");
             if (!ValidateCreateAsync(request))
             {
                 return BadRequest();
@@ -102,6 +112,7 @@ namespace DemoApp.API.Controllers
         [Route("{id:Guid}")]
         public async Task<IActionResult> UpdateV1([FromRoute] Guid id, [FromBody] UpdateTeacherRequestDto updateTeacherRequestDto)
         {
+            logger.LogInformation($"TeachersController >> UpdateV1 >> UpdateTeacherRequestDto:  {JsonSerializer.Serialize(updateTeacherRequestDto)}; ID: {id}");
             if (!ValidateUpdateAsync(updateTeacherRequestDto))
             {
                 return BadRequest();
@@ -117,6 +128,7 @@ namespace DemoApp.API.Controllers
         [Route("{id:Guid}")]
         public async Task<IActionResult> UpdateV2([FromRoute] Guid id, [FromBody] UpdateTeacherRequestDto updateTeacherRequestDto)
         {
+            logger.LogInformation($"TeachersController >> UpdateV2 >> UpdateTeacherRequestDto:  {JsonSerializer.Serialize(updateTeacherRequestDto)}; ID: {id}");
             if (!ValidateUpdateAsync(updateTeacherRequestDto))
             {
                 return BadRequest();
@@ -132,6 +144,7 @@ namespace DemoApp.API.Controllers
         [Route("{id:Guid}")]
         public async Task<IActionResult> DeleteV1([FromRoute] Guid id)
         {
+            logger.LogInformation($"TeachersController >> DeleteV1 >> ID: {id}");
             var record = await teacherRepository.DeleteAsync(id);
             if (record == null) return NotFound();
             return Ok(record);
@@ -143,6 +156,7 @@ namespace DemoApp.API.Controllers
         [Route("{id:Guid}")]
         public async Task<IActionResult> DeleteV2([FromRoute] Guid id)
         {
+            logger.LogInformation($"TeachersController >> DeleteV1 >> ID: {id}");
             var record = await teacherRepository.DeleteAsync(id);
             if (record == null) return NotFound();
             return Ok(record);
